@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>  
+
+<head>
+   <style>
+      table {
+         border-collapse: collapse;
+         width: 30%;
+         margin: 20px;
+      }
+      table,th,td {
+         border: 1px solid black;
+      }
+      th,td {
+            padding: 8px;
+            text-align: center;
+        }
+   </style>
+</head>
+
+<body>
+   <h2>Upload and Display</h2>
+   <h2>Table 1</h2>
+   <input type="file" id="fileInput" accept=".csv" onchange="readCSV(this)">
+   <div id="table1Container"></div>
+      
+   <h2>Table 2</h2>
+   <table>
+      <tr>
+        <th>Categoty</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>Alpha</td>
+        <td id="alphaValue"></td>
+      </tr>
+      <tr>
+         <td>Beta</td>
+         <td id="betaValue"></td>
+      </tr>
+      <tr>
+         <td>Charlie</td>
+         <td id="charlieValue"></td>
+      </tr>
+   </table>
+    
+   <script>
+      let table1Data = [];
+
+      function readCSV(input) {
+          const file = input.files[0];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                  const fileContent = e.target.result;
+                  const rows = fileContent.split('\n').map(row => row.trim().split(','));
+
+                  table1Data = rows.map(row => {
+                      const [index, value] = row;
+                      return {
+                          index,
+                          value: parseInt(value)
+                      };
+                  });
+
+                  const table1Container = document.getElementById("table1Container");
+                  const table1 = document.createElement("table");
+
+                  for (const row of rows) {
+                      const tr = document.createElement("tr");
+                      for (const cell of row) {
+                          const td = document.createElement("td");
+                          td.textContent = cell;
+                          tr.appendChild(td);
+                      }
+                      table1.appendChild(tr);
+                  }
+
+                  table1Container.innerHTML = "";
+                  table1Container.appendChild(table1);
+
+                  const alphaValue = table1Data.find(item => item.index === "A5").value + table1Data.find(item => item.index === "A20").value;
+                  const betaValue = table1Data.find(item => item.index === "A15").value / table1Data.find(item => item.index === "A7").value;
+                  const charlieValue = table1Data.find(item => item.index === "A13").value * table1Data.find(item => item.index === "A12").value;
+
+                  document.getElementById("alphaValue").textContent = alphaValue;
+                  document.getElementById("betaValue").textContent = betaValue;
+                  document.getElementById("charlieValue").textContent = charlieValue;
+              };
+              reader.readAsText(file);
+          }
+      }
+  </script>
+</body>
+</html>
